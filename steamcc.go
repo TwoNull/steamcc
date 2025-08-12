@@ -1,6 +1,7 @@
 package steamcc
 
 import (
+	"encoding/hex"
 	"fmt"
 	"hash/crc32"
 
@@ -34,7 +35,11 @@ func (c *Client) GetTokenForUser(user string) (string, error) {
 
 	for u, v := range cc {
 		if u[0:8] == checksum {
-			dataOut, err := crypto.Decrypt([]byte(user), []byte(v))
+			dataIn, err := hex.DecodeString(v.(string))
+			if err != nil {
+				return "", err
+			}
+			dataOut, err := crypto.Decrypt([]byte(user), []byte(dataIn))
 			if err != nil {
 				return "", err
 			}

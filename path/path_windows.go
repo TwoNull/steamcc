@@ -29,12 +29,12 @@ func GetLoginUsers(steamDir string) ([]types.User, error) {
 		return nil, err
 	}
 
-	for u, v := range m["users"].(map[string]map[string]string) {
+	for u, v := range m["users"].(map[string]interface{}) {
 		users = append(users, types.User{
-			AccountName: v["AccountName"],
-			PersonaName: v["PersonaName"],
+			AccountName: v.(map[string]interface{})["AccountName"].(string),
+			PersonaName: v.(map[string]interface{})["PersonaName"].(string),
 			Steam64:     u,
-			AutoLogin:   v["AllowAutoLogin"] == "1",
+			AutoLogin:   v.(map[string]interface{})["AllowAutoLogin"].(string) == "1",
 		})
 	}
 
@@ -42,7 +42,7 @@ func GetLoginUsers(steamDir string) ([]types.User, error) {
 }
 
 // Attempts to obtain ConnectCache from local.vdf, falls back to config.vdf (legacy) if not present
-func GetConnectCache(steamDir string) (map[string]string, error) {
+func GetConnectCache(steamDir string) (map[string]interface{}, error) {
 	if steamDir == "" {
 		steamDir = filepath.Join(os.Getenv("ProgramFiles(X86)"), "Steam")
 	}
@@ -65,7 +65,7 @@ func GetConnectCache(steamDir string) (map[string]string, error) {
 			return nil, err
 		}
 
-		return m["InstallConfigStore"].(map[string]interface{})["Software"].(map[string]interface{})["Valve"].(map[string]interface{})["Steam"].(map[string]interface{})["ConnectCache"].(map[string]string), nil
+		return m["InstallConfigStore"].(map[string]interface{})["Software"].(map[string]interface{})["Valve"].(map[string]interface{})["Steam"].(map[string]interface{})["ConnectCache"].(map[string]interface{}), nil
 	}
 
 	file, err := os.Open(filepath.Join(cDir, "Steam", "local.vdf"))
@@ -79,5 +79,5 @@ func GetConnectCache(steamDir string) (map[string]string, error) {
 		return nil, err
 	}
 
-	return m["MachineUserConfigStore"].(map[string]interface{})["Software"].(map[string]interface{})["Valve"].(map[string]interface{})["Steam"].(map[string]interface{})["ConnectCache"].(map[string]string), nil
+	return m["MachineUserConfigStore"].(map[string]interface{})["Software"].(map[string]interface{})["Valve"].(map[string]interface{})["Steam"].(map[string]interface{})["ConnectCache"].(map[string]interface{}), nil
 }
