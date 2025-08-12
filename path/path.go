@@ -14,6 +14,6 @@ func GetLoginUsers(steamDir string) ([]types.User, error) {
 }
 
 // Unimplmented
-func GetConnectCache(steamDir string) (map[string]string, error) {
+func GetConnectCache(steamDir string) (map[string]interface{}, error) {
 	return nil, fmt.Errorf("unimplemented")
 }
